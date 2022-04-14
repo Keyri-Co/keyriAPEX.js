@@ -48,7 +48,7 @@ const KeyriURL = `https://api.keyri.co/widget/${your_keyri_id}/login?link=false&
 
 // 3.) Instantiate the class
 //
-const webApex = new WebAPEX(ApexSocketURL, KeyriURL, targetElement);
+const webApex = new WebAPEX(ApexSocketURL, KeyriURL, TargetElement);
 
 // 4.) Start a connection
 //
