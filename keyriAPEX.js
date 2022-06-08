@@ -720,7 +720,7 @@ class WebAPEX {
     if (message.data && message.data.action === "CUSTOM_AUTH_CHALLENGE") {
       // Try destructuring data from `message.data.custom` into our fields
       try {
-        const { APIKey, APISecret, UserId } = message.data.custom;
+        const { APIKey, APISecret, UserId } = message.data.data;
       } catch (e) {
         this.#broadcast("error", { source: "handlePost", data: e });
         return false;
