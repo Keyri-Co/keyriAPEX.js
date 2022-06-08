@@ -9,53 +9,52 @@
 |_/    \/(_______/   \_/   |/   \__/\_______/    |/     \||/       \_______/(_______/|/     \|
 ```
 
-# What Is This?
-
-Browser script for handling Keyri Auth with the APEX crypto platform
-
-
 
 # What does the process look like?
 
-You install the [keyriAPEX.js](https://github.com/Keyri-Co/keyriAPEX.js) script on your page. From the perspective of this library, the process of logging in a user looks like this:
+You install the [keyriAPEX.js](https://github.com/Keyri-Co/keyriAPEX.js) script on your login page.&#x20;
+You host [this iframe](https://raw.githubusercontent.com/Keyri-Co/library-keyri-connect/main/KeyriQR.html) from the same origin as your login page.&#x20;
+The library does the following:
 
 1.  It puts an iframe on the page for displaying a QR code.
+
 2.  It listens to the iframe for decrypted API data {`APIKey`, `APISecret`, `UserId`}
+
 3.  It uses this data to authenticate the user with the APEX-API to get a `SessionToken`
-4.  It stores the `SessionToken` in localStorage
-5.  It deprovisions the `APIKey` from step 2 in APEX's system via their API
+
+4.  It deprovisions the `APIKey` from step 2 in APEX's system via their API
+
+5.  It stores the `SessionToken` in localStorage
+
+6.  It directs the user to the logged-in state
 
 # How do I use it?
 
-Basically, include this script on your login page. After the page is loaded, instantiate the class `webApex` with these arguments:
+Simply include this script on your login page. After the page is loaded, instantiate the class `webApex` with these arguments:
 
 1.  The Apex-API-web-socket URL
-2.  The Keyri URL
-3.  The Element you want the QR-Code to land on
+
+2.  The KeyriQR URL (your iframe)
+
+3.  The Element you want the QR-Code to render inside
 
 ```javascript
-
 // 1.) Get an element off of the DOM you want to load our iFrame into
-//
-const TargetElement = document.querySelector("#element_to_put_iframe_in");
+let targetElement = document.querySelector(".login-form__container-right");
 
 
 // 2.) These are the URLs that the class will need
-//
-const ApexSocketURL = `wss://${your_APEX_websocket_endpoint}`;
-const KeyriURL = `https://api.keyri.co/widget/${your_keyri_id}/login?link=false&aesKey=true`;
+let ApexSocketURL = "wss://apexapi.{yourDomain}/WSGateway";
+let KeyriURL = "./KeyriQR.html";
 
 
 // 3.) Instantiate the class
-//
-const webApex = new WebAPEX(ApexSocketURL, KeyriURL, TargetElement);
+let webApex = new WebAPEX(ApexSocketURL, KeyriURL, targetElement);
 
-// 4.) Start a connection
-//
+// 4.) Try connecting
 await webApex.connect();
 
 // 5.) Listen for errors IF you want to handle them
-//
 webApex.on("error",(err) => {
   console.log("ERROR DATA:",err);
 })
