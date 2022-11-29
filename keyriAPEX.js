@@ -402,19 +402,46 @@ class WebAPEX {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-  constructor(socketURL, keyriURL, targetElement) {
+  constructor(socketURL, targetElement) {
     // This allows us to issue custom events
     // that a class user can listen to
     //
     this.#radio = document.createDocumentFragment();
     this.#socketURL = socketURL;
 
+
+    const iframeSrc = `
+    <!DOCTYPE html>
+    <html lang="en-US">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="https://static.keyri.com/library-keyri-connect/iframe.css" rel="stylesheet">
+      </head>
+      <body>
+        <img class="pre-blurry" id="qr-target" style="height: 100%; width: 100%; z-index: -1" />
+        <div
+          id="qr-lay-over"
+          onclick="main();"
+          style="height: 100%; width: 100%; position: absolute; top: 0; left: 0; z-index: 1"
+        ></div>
+      </body>
+    </html>
+    
+    <script src="https://static.keyri.com/library-keyri-connect/keyri-0.10.2.min.js"></script>
+    <script>
+        self = {location: {host: top.location.host}};
+        parent = {location: {origin: location.origin}};
+    </script>
+    `;
+
     // Creating iframe and configure it
     const keyriQR = document.createElement("iframe");
-    keyriQR.src = keyriURL;
-    keyriQR.width = "100%";
-    keyriQR.height = "100%";
+    keyriQR.srcdoc = iframeSrc;
+    keyriQR.width = "350px";
+    keyriQR.height = "350px";
     keyriQR.style.borderWidth = "0";
+    keyriQR.scrolling = "no";
     keyriQR.onload = () => {
       window.addEventListener("message", this.handlePost, false);
     };
@@ -745,3 +772,25 @@ class WebAPEX {
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+// 1.) Get an element off of the DOM you want to load our iFrame into
+let targetElement = document.querySelector(".login-form__container-right");
+let yourDomain = "bitazza";
+
+// 2.) These are the URLs that the class will need
+let ApexSocketURL = "wss://apexapi.{yourDomain}/WSGateway";
+let KeyriURL = "./KeyriQR.html";
+
+
+// 3.) Instantiate the class
+let webApex = new WebAPEX(ApexSocketURL, targetElement);
+
+// 4.) Try connecting
+await webApex.connect();
+
+// 5.) Listen for errors IF you want to handle them
+webApex.on("error",(err) => {
+  console.log("ERROR DATA:",err);
+})
