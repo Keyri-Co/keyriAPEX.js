@@ -438,8 +438,11 @@ class WebAPEX {
     // Creating iframe and configure it
     const keyriQR = document.createElement("iframe");
     keyriQR.srcdoc = iframeSrc;
-    keyriQR.width = "350px";
-    keyriQR.height = "350px";
+    keyriQR.style.padding = "50px";
+    keyriQR.style.width = "350px";
+    keyriQR.style.height = "350px";
+    keyriQR.style.borderWidth = "0";
+    keyriQR.style["vertical-align"] = "middle";
     keyriQR.style.borderWidth = "0";
     keyriQR.scrolling = "no";
     keyriQR.onload = () => {
