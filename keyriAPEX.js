@@ -410,6 +410,8 @@ class WebAPEX {
     this.#socketURL = socketURL;
 
 
+
+
     const iframeSrc = `
     <!DOCTYPE html>
     <html lang="en-US">
@@ -430,11 +432,25 @@ class WebAPEX {
     
     <script src="https://static.keyri.com/library-keyri-connect/keyri-0.10.2.min.js"></script>
     <script>
+
+        const postMessage = window.parent.postMessage;
+        postMessage("HI MOM","*");
+
         self = {location: {host: top.location.host}};
         parent = {location: {origin: location.origin}};
+        
+        window.parent.postMessage = (a,b) => {
+          console.log("POST-MESSAGE",{a,b});
+          return postMessage(a,"*")
+        }
+
+        postMessage("WAIT UNTIL THEY GET A LOAD OF ME...","*");
+
+    
     </script>
     `;
 
+    window.addEventListener("message", this.handlePost, false);
     // Creating iframe and configure it
     const keyriQR = document.createElement("iframe");
     keyriQR.srcdoc = iframeSrc;
@@ -445,9 +461,6 @@ class WebAPEX {
     keyriQR.style["vertical-align"] = "middle";
     keyriQR.style.borderWidth = "0";
     keyriQR.scrolling = "no";
-    keyriQR.onload = () => {
-      window.addEventListener("message", this.handlePost, false);
-    };
 
     // Load the iframe onto our target
     targetElement.innerHTML = "";
@@ -745,21 +758,25 @@ class WebAPEX {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   //
-  #handlePost = async (message) => {
+  handlePost = async (message) => {
+
+    console.log("HANDLE-POST", {message});
+
     // Check messages from iframe with required action
-    if (message.data && message.data.action === "CUSTOM_AUTH_CHALLENGE") {
-      // Try destructuring data from `message.data.custom` into our fields
-      try {
-        const { APIKey, APISecret, UserId } = message.data.data;
-      } catch (e) {
-        this.#broadcast("error", { source: "handlePost", data: e });
-        return false;
-      }
-
-      // Let's try authenticating the user
-      let output = await this.authUser(APIKey, APISecret, UserId);
-
+    if (message?.data?.type === "session_validate") {
+   
+      let mobile_data = JSON.parse(message?.data?.data);
+      console.log({mobile_data});
       // Set the session token into Local Storage
+      //
+      //
+      //
+      //
+      //========================> HERE!!!
+      //
+      //
+      //
+      //
       localStorage.token = output.o.SessionToken;
 
       // Destroy the freshly created API Key
@@ -777,13 +794,12 @@ class WebAPEX {
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-
 // 1.) Get an element off of the DOM you want to load our iFrame into
 let targetElement = document.querySelector(".login-form__container-right");
-let yourDomain = "bitazza";
+let yourDomain = "bitazza.com";
 
 // 2.) These are the URLs that the class will need
-let ApexSocketURL = "wss://apexapi.{yourDomain}/WSGateway";
+let ApexSocketURL = `wss://apexapi.${yourDomain}/WSGateway`;
 let KeyriURL = "./KeyriQR.html";
 
 
