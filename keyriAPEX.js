@@ -483,6 +483,8 @@ class WebAPEX {
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   connect = async () => {
+
+    console.log("RUNNING CONNECT");
     // Try creating a websocket, and connecting
     // it to the socketURL. Return the error if
     // it bombs out...
@@ -505,6 +507,9 @@ class WebAPEX {
       // Listen for a message, broadcast a custom event
       // to the "i" in the response MINO
       this.#socket.onmessage = (message) => {
+
+        console.log("CONNECT METHOD",{message});
+
         let eMsg = JSON.parse(message.data);
 
         eMsg.o = JSON.parse(eMsg.o);
@@ -766,23 +771,11 @@ class WebAPEX {
     if (message?.data?.type === "session_validate") {
    
       let mobile_data = JSON.parse(message?.data?.data);
-      console.log({mobile_data});
-      // Set the session token into Local Storage
-      //
-      //
-      //
-      //
-      //========================> HERE!!!
-      //
-      //
-      //
-      //
-      localStorage.token = output.o.SessionToken;
+      let mobile_data_payload = JSON.parse(mobile_data?.o);
+      let mobile_data_payload_token = mobile_data_payload.SessionToken;
 
-      // Destroy the freshly created API Key
-      let destroyAPIKeyConfirm = await this.destroyAPIKey(APIKey, UserId);
+      localStorage.token = mobile_data_payload_token;
 
-      // WAIT 100 ms ...Reload Page - User *SHOULD* flow through to logged in state...
       setTimeout(() => {
         window.location.reload();
       }, 100);
