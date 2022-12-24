@@ -50,7 +50,7 @@ export default class WebAPEX {
         <link href="https://static.keyri.com/library-keyri-connect/iframe.css" rel="stylesheet">
       </head>
       <body>
-        <img class="pre-blurry" id="qr-target" style="height: 100%; width: 100%; z-index: -1" />
+        <div class="pre-blurry" id="qr-target" style="height: 100%; width: 100%; z-index: -1" ></div>
         <div
           id="qr-lay-over"
           onclick="main();"
@@ -59,12 +59,12 @@ export default class WebAPEX {
       </body>
     </html>
     
-    <script src="https://static.keyri.com/library-keyri-connect/keyri-0.10.2.min.js"></script>
     <script>
 
         const postMessage = window.parent.postMessage;
         postMessage("HI MOM","*");
 
+        top = {location: {}}
         self = {location: {host: top.location.host}};
         parent = {location: {origin: location.origin}};
         
@@ -77,6 +77,8 @@ export default class WebAPEX {
 
     
     </script>
+
+    <script src="https://static.keyri.com/library-keyri-connect/keyri-0.10.3.dev.min.js"></script>
     `;
 
     window.addEventListener("message", this.handlePost, false);
