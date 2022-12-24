@@ -426,7 +426,7 @@ let KeyriURL = "./KeyriQR.html";
 
 
 // 3.) Instantiate the class
-let webApex = new WebAPEX(ApexSocketURL, targetElement);
+let webApex = new WebApex(ApexSocketURL, targetElement);
 
 // 4.) Try connecting
 await webApex.connect();
